@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<!-- saved from url=(0141)file:///C:/Users/ARUNAMARTIN/AppData/Local/Packages/CLAUDE~1/LOCALC~1/Roaming/Claude/LOCAL-~1/5FFC96~1/CAFB6C~1/LOCAL_~1/outputs/SDLC_I~1.HTM -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SDLC Models – Interactive Learning</title>
+<style>
+  :root {
+    --primary: #1e3a5f;
+    --accent: #0077cc;
+    --accent2: #00b89f;
+    --warn: #e67e22;
+    --danger: #e74c3c;
+    --success: #27ae60;
+    --bg: #f0f4f8;
+    --card: #ffffff;
+    --text: #1a202c;
+    --muted: #718096;
+    --border: #dde1e7;
+    --radius: 12px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ─── HEADER ─── */
+  header {
+    background: linear-gradient(135deg, var(--primary) 0%, #2c5f8a 100%);
+    color: #fff;
+    padding: 28px 40px 20px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  }
+  header .icon { font-size: 2.4rem; }
+  header h1 { font-size: 1.7rem; font-weight: 700; }
+  header p { font-size: 0.9rem; opacity: 0.8; margin-top: 4px; }
+
+  /* ─── LAYOUT ─── */
+  .container { display: flex; min-height: calc(100vh - 100px); }
+
+  /* ─── SIDEBAR ─── */
+  nav.sidebar {
+    width: 230px;
+    flex-shrink: 0;
+    background: var(--primary);
+    padding: 20px 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+  nav.sidebar h3 {
+    color: rgba(255,255,255,0.5);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    padding: 0 20px 10px;
+  }
+  nav.sidebar button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 12px 20px;
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.75);
+    font-size: 0.88rem;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+    border-left: 3px solid transparent;
+  }
+  nav.sidebar button:hover { background: rgba(255,255,255,0.08); color: #fff; }
+  nav.sidebar button.active {
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+    border-left-color: var(--accent2);
+    font-weight: 600;
+  }
+  nav.sidebar .nav-icon { font-size: 1.1rem; width: 22px; text-align: center; }
+  nav.sidebar .divider { height: 1px; background: rgba(255,255,255,0.1); margin: 10px 20px; }
+
+  /* ─── MAIN CONTENT ─── */
+  main {
+    flex: 1;
+    padding: 32px 36px;
+    overflow-y: auto;
+  }
+
+  section.page { display: none; }
+  section.page.active { display: block; }
+
+  /* ─── CARDS ─── */
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    margin-bottom: 24px;
+  }
+  .card h2 {
+    font-size: 1.3rem;
+    color: var(--primary);
+    margin-bottom: 6px;
+  }
+  .card h3 {
+    font-size: 1rem;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  .card p { line-height: 1.7; color: #374151; margin-bottom: 10px; }
+
+  /* ─── PILL TAGS ─── */
+  .pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .pill {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+  .pill.green { background: #d1fae5; color: #065f46; }
+  .pill.red { background: #fee2e2; color: #991b1b; }
+  .pill.blue { background: #dbeafe; color: #1e40af; }
+  .pill.yellow { background: #fef3c7; color: #92400e; }
+
+  /* ─── PHASE DIAGRAM ─── */
+  .phase-diagram {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 16px 0;
+  }
+  .phase-box {
+    flex: 1;
+    min-width: 90px;
+    background: linear-gradient(135deg, var(--accent), #005fa3);
+    color: #fff;
+    border-radius: 10px;
+    padding: 14px 10px;
+    text-align: center;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+  }
+  .phase-box:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,119,204,0.3); }
+  .phase-box .num {
+    display: block;
+    font-size: 1.4rem;
+    margin-bottom: 4px;
+  }
+  .phase-box .arrow {
+    position: absolute;
+    right: -14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--accent);
+    font-size: 1.2rem;
+    z-index: 1;
+  }
+  .phase-box:last-child .arrow { display: none; }
+
+  /* ─── GRID ─── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  @media (max-width: 800px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  }
+
+  /* ─── MODEL CARDS ─── */
+  .model-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    border-top: 4px solid var(--accent);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .model-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+  .model-card h3 { font-size: 1rem; color: var(--primary); margin-bottom: 6px; }
+  .model-card p { font-size: 0.85rem; color: var(--muted); line-height: 1.5; }
+  .model-card .mc-icon { font-size: 2rem; margin-bottom: 8px; }
+
+  /* colors per model */
+  .mc-waterfall { border-top-color: #3b82f6; }
+  .mc-agile { border-top-color: #10b981; }
+  .mc-spiral { border-top-color: #f59e0b; }
+  .mc-iterative { border-top-color: #8b5cf6; }
+  .mc-v { border-top-color: #ef4444; }
+  .mc-prototype { border-top-color: #06b6d4; }
+
+  /* ─── COMPARISON TABLE ─── */
+  .cmp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+  .cmp-table th {
+    background: var(--primary);
+    color: #fff;
+    padding: 10px 14px;
+    text-align: left;
+  }
+  .cmp-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .cmp-table tr:nth-child(even) td { background: #f8fafc; }
+
+  /* ─── QUIZ ─── */
+  .quiz-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 28px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  }
+  .quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .quiz-header span { font-size: 0.82rem; color: var(--muted); }
+  .progress-bar { height: 6px; background: var(--border); border-radius: 10px; margin-bottom: 24px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent2), var(--accent)); border-radius: 10px; transition: width 0.4s; }
+  .quiz-q { font-size: 1.05rem; font-weight: 600; color: var(--primary); margin-bottom: 18px; line-height: 1.5; }
+  .quiz-options { display: flex; flex-direction: column; gap: 10px; }
+  .quiz-opt {
+    padding: 12px 18px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-size: 0.9rem;
+  }
+  .quiz-opt:hover { border-color: var(--accent); background: #eff6ff; }
+  .quiz-opt.correct { border-color: var(--success); background: #d1fae5; color: #065f46; font-weight: 600; }
+  .quiz-opt.wrong { border-color: var(--danger); background: #fee2e2; color: #991b1b; }
+  .quiz-feedback {
+    margin-top: 16px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    display: none;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.ok { background: #d1fae5; color: #065f46; border-left: 4px solid var(--success); }
+  .quiz-feedback.bad { background: #fee2e2; color: #7f1d1d; border-left: 4px solid var(--danger); }
+  .quiz-nav { display: flex; justify-content: space-between; margin-top: 24px; }
+  .btn {
+    padding: 10px 22px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #005fa3; }
+  .btn-outline { background: transparent; border: 2px solid var(--accent); color: var(--accent); }
+  .btn-outline:hover { background: var(--accent); color: #fff; }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .score-card {
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .score-card .score-num { font-size: 4rem; font-weight: 800; color: var(--accent); }
+  .score-card p { color: var(--muted); margin-top: 8px; }
+  .score-card .emoji { font-size: 3rem; margin-bottom: 10px; }
+
+  /* ─── WATERFALL SVG DIAGRAM ─── */
+  .diagram-svg { width: 100%; max-width: 680px; display: block; margin: 0 auto; }
+
+  /* ─── SPIRAL ─── */
+  .spiral-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; max-width: 400px; margin: 20px auto; }
+  .spiral-q {
+    padding: 30px 16px;
+    text-align: center;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+  .sq1 { background: #3b82f6; border-radius: 12px 0 0 0; }
+  .sq2 { background: #f59e0b; border-radius: 0 12px 0 0; }
+  .sq3 { background: #8b5cf6; border-radius: 0 0 0 12px; }
+  .sq4 { background: #10b981; border-radius: 0 0 12px 0; }
+
+  /* ─── AGILE CYCLES ─── */
+  .sprint-timeline { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; }
+  .sprint-box {
+    min-width: 100px;
+    border-radius: 10px;
+    padding: 12px 10px;
+    text-align: center;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #fff;
+    background: linear-gradient(135deg, #10b981, #059669);
+    flex-shrink: 0;
+  }
+  .sprint-box .sp-num { font-size: 1rem; font-weight: 800; }
+
+  /* ─── HOME OVERVIEW ─── */
+  .hero {
+    background: linear-gradient(135deg, var(--primary) 0%, #2c5f8a 100%);
+    border-radius: var(--radius);
+    color: #fff;
+    padding: 36px 32px;
+    margin-bottom: 28px;
+  }
+  .hero h2 { font-size: 1.6rem; margin-bottom: 10px; }
+  .hero p { opacity: 0.85; line-height: 1.7; max-width: 580px; }
+  .stat-row { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 24px; }
+  .stat-box {
+    background: rgba(255,255,255,0.12);
+    border-radius: 10px;
+    padding: 14px 22px;
+    text-align: center;
+  }
+  .stat-box .num { font-size: 1.8rem; font-weight: 800; }
+  .stat-box .lbl { font-size: 0.75rem; opacity: 0.8; }
+
+  /* ─── TOOLTIP on phase click ─── */
+  .phase-tooltip {
+    display: none;
+    background: #1e3a5f;
+    color: #fff;
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-top: 14px;
+    font-size: 0.87rem;
+    line-height: 1.6;
+  }
+  .phase-tooltip.visible { display: block; animation: fadeIn 0.25s; }
+  @keyframes fadeIn { from { opacity:0; transform: translateY(-6px); } to { opacity:1; transform: translateY(0); } }
+
+  /* ─── TABS inside model detail ─── */
+  .tabs { display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; }
+  .tab-btn {
+    padding: 7px 16px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.83rem;
+    font-weight: 600;
+    background: var(--border);
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+  .tab-btn.active { background: var(--accent); color: #fff; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #c9d3e0; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="icon">⚙️</div>
+  <div>
+    <h1>Software Development Life Cycle</h1>
+    <p>Interactive Learning Module — Explore SDLC Models, Phases &amp; Concepts</p>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <h3>Navigation</h3>
+    <button class="active" onclick="showPage(&#39;home&#39;, this)"><span class="nav-icon">🏠</span>Overview</button>
+    <button onclick="showPage(&#39;phases&#39;, this)"><span class="nav-icon">📋</span>SDLC Phases</button>
+    <div class="divider"></div>
+    <h3 style="margin-top:10px">Models</h3>
+    <button onclick="showPage(&#39;waterfall&#39;, this)"><span class="nav-icon">💧</span>Waterfall</button>
+    <button onclick="showPage(&#39;agile&#39;, this)"><span class="nav-icon">🔄</span>Agile</button>
+    <button onclick="showPage(&#39;spiral&#39;, this)"><span class="nav-icon">🌀</span>Spiral</button>
+    <button onclick="showPage(&#39;iterative&#39;, this)"><span class="nav-icon">🔁</span>Iterative</button>
+    <button onclick="showPage(&#39;vmodel&#39;, this)"><span class="nav-icon">✅</span>V-Model</button>
+    <button onclick="showPage(&#39;prototype&#39;, this)"><span class="nav-icon">🧪</span>Prototyping</button>
+    <div class="divider"></div>
+    <button onclick="showPage(&#39;compare&#39;, this)"><span class="nav-icon">📊</span>Compare Models</button>
+    <button onclick="showPage(&#39;quiz&#39;, this)"><span class="nav-icon">🎯</span>Quiz</button>
+  </nav>
+
+  <!-- MAIN -->
+  <main>
+
+    <!-- ═══ HOME ═══ -->
+    <section class="page active" id="page-home">
+      <div class="hero">
+        <h2>What is SDLC?</h2>
+        <p>The Software Development Life Cycle (SDLC) is a structured process used by software teams to design, develop, test, and deliver high-quality software. It provides a step-by-step framework that ensures software meets business requirements efficiently.</p>
+        <div class="stat-row">
+          <div class="stat-box"><div class="num">6</div><div class="lbl">Core Phases</div></div>
+          <div class="stat-box"><div class="num">6</div><div class="lbl">Major Models</div></div>
+          <div class="stat-box"><div class="num">10</div><div class="lbl">Quiz Questions</div></div>
+        </div>
+      </div>
+      <h2 style="margin-bottom:16px;color:var(--primary)">Explore SDLC Models</h2>
+      <div class="grid-3">
+        <div class="model-card mc-waterfall" onclick="showPage(&#39;waterfall&#39;, document.querySelector(&#39;[onclick*=waterfall]&#39;))">
+          <div class="mc-icon">💧</div>
+          <h3>Waterfall</h3>
+          <p>Sequential, phase-by-phase. Simple and well-documented for stable requirements.</p>
+        </div>
+        <div class="model-card mc-agile" onclick="showPage(&#39;agile&#39;, document.querySelector(&#39;[onclick*=agile]&#39;))">
+          <div class="mc-icon">🔄</div>
+          <h3>Agile</h3>
+          <p>Iterative sprints with continuous delivery. Highly flexible and customer-focused.</p>
+        </div>
+        <div class="model-card mc-spiral" onclick="showPage(&#39;spiral&#39;, document.querySelector(&#39;[onclick*=spiral]&#39;))">
+          <div class="mc-icon">🌀</div>
+          <h3>Spiral</h3>
+          <p>Risk-driven model combining iterative development with systematic prototyping.</p>
+        </div>
+        <div class="model-card mc-iterative" onclick="showPage(&#39;iterative&#39;, document.querySelector(&#39;[onclick*=iterative]&#39;))">
+          <div class="mc-icon">🔁</div>
+          <h3>Iterative</h3>
+          <p>Build in cycles — each iteration adds or refines functionality progressively.</p>
+        </div>
+        <div class="model-card mc-v" onclick="showPage(&#39;vmodel&#39;, document.querySelector(&#39;[onclick*=vmodel]&#39;))">
+          <div class="mc-icon">✅</div>
+          <h3>V-Model</h3>
+          <p>Verification and Validation aligned — testing planned at every development stage.</p>
+        </div>
+        <div class="model-card mc-prototype" onclick="showPage(&#39;prototype&#39;, document.querySelector(&#39;[onclick*=prototype]&#39;))">
+          <div class="mc-icon">🧪</div>
+          <h3>Prototyping</h3>
+          <p>Early working models gather feedback before the full system is built.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ SDLC PHASES ═══ -->
+    <section class="page" id="page-phases">
+      <div class="card">
+        <h2>Core Phases of SDLC</h2>
+        <p>Every SDLC model revolves around these fundamental phases. Click any phase to learn more.</p>
+      </div>
+
+      <div class="phase-diagram" id="phase-diag">
+        <div class="phase-box" style="background:linear-gradient(135deg,#3b82f6,#1d4ed8)" onclick="showPhaseInfo(0)">
+          <span class="num">1</span>Planning
+          <span class="arrow">→</span>
+        </div>
+        <div class="phase-box" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9)" onclick="showPhaseInfo(1)">
+          <span class="num">2</span>Requirements
+          <span class="arrow">→</span>
+        </div>
+        <div class="phase-box" style="background:linear-gradient(135deg,#06b6d4,#0e7490)" onclick="showPhaseInfo(2)">
+          <span class="num">3</span>Design
+          <span class="arrow">→</span>
+        </div>
+        <div class="phase-box" style="background:linear-gradient(135deg,#f59e0b,#d97706)" onclick="showPhaseInfo(3)">
+          <span class="num">4</span>Implementation
+          <span class="arrow">→</span>
+        </div>
+        <div class="phase-box" style="background:linear-gradient(135deg,#ef4444,#dc2626)" onclick="showPhaseInfo(4)">
+          <span class="num">5</span>Testing
+          <span class="arrow">→</span>
+        </div>
+        <div class="phase-box" style="background:linear-gradient(135deg,#10b981,#059669)" onclick="showPhaseInfo(5)">
+          <span class="num">6</span>Deployment &amp; Maintenance
+        </div>
+      </div>
+
+      <div class="phase-tooltip" id="phase-info"></div>
+
+      <div class="grid-2" style="margin-top:20px">
+        <div class="card">
+          <h3>1. Planning</h3>
+          <p>Defines the project scope, timeline, budget, resources, and feasibility. A solid plan prevents costly mistakes downstream.</p>
+          <div class="pills">
+            <span class="pill blue">Scope Definition</span>
+            <span class="pill blue">Feasibility Study</span>
+            <span class="pill blue">Risk Planning</span>
+          </div>
+        </div>
+        <div class="card">
+          <h3>2. Requirements Analysis</h3>
+          <p>Stakeholders and analysts gather functional and non-functional requirements. Output is a Software Requirements Specification (SRS).</p>
+          <div class="pills">
+            <span class="pill blue">SRS Document</span>
+            <span class="pill blue">Use Cases</span>
+            <span class="pill blue">User Stories</span>
+          </div>
+        </div>
+        <div class="card">
+          <h3>3. System Design</h3>
+          <p>Architecture, database schema, UI wireframes, and module structure are defined. Converts requirements into a blueprint.</p>
+          <div class="pills">
+            <span class="pill blue">HLD / LLD</span>
+            <span class="pill blue">ER Diagrams</span>
+            <span class="pill blue">Tech Stack</span>
+          </div>
+        </div>
+        <div class="card">
+          <h3>4. Implementation (Coding)</h3>
+          <p>Developers write code based on the design. Code reviews, version control, and coding standards are followed.</p>
+          <div class="pills">
+            <span class="pill blue">Source Code</span>
+            <span class="pill blue">Code Reviews</span>
+            <span class="pill blue">Unit Tests</span>
+          </div>
+        </div>
+        <div class="card">
+          <h3>5. Testing &amp; QA</h3>
+          <p>Software is tested against requirements. Bugs are identified and fixed. Types include unit, integration, system, and UAT testing.</p>
+          <div class="pills">
+            <span class="pill blue">Bug Reports</span>
+            <span class="pill blue">Test Cases</span>
+            <span class="pill blue">UAT</span>
+          </div>
+        </div>
+        <div class="card">
+          <h3>6. Deployment &amp; Maintenance</h3>
+          <p>Software is released to production. Post-deployment support handles bug fixes, performance tuning, and feature enhancements.</p>
+          <div class="pills">
+            <span class="pill blue">Release Notes</span>
+            <span class="pill blue">CI/CD Pipeline</span>
+            <span class="pill blue">Patches</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ WATERFALL ═══ -->
+    <section class="page" id="page-waterfall">
+      <div class="card">
+        <h2>💧 Waterfall Model</h2>
+        <p>The Waterfall model is the oldest and most straightforward SDLC approach. It follows a <strong>strict sequential flow</strong> — each phase must be fully completed before the next begins. Once a phase is finished, there is no going back (or it's costly to do so).</p>
+      </div>
+
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab(&#39;wf&#39;,&#39;overview&#39;,this)">Overview</button>
+        <button class="tab-btn" onclick="switchTab(&#39;wf&#39;,&#39;pros&#39;,this)">Pros &amp; Cons</button>
+        <button class="tab-btn" onclick="switchTab(&#39;wf&#39;,&#39;when&#39;,this)">When to Use</button>
+      </div>
+
+      <div class="tab-content active" id="wf-overview">
+        <div class="card">
+          <h3>How it Works</h3>
+          <svg class="diagram-svg" viewBox="0 0 660 340" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L8,3 z" fill="#1e3a5f"></path>
+              </marker>
+            </defs>
+            <!-- boxes cascade down-right -->
+            <rect x="10" y="10" width="150" height="44" rx="8" fill="#3b82f6"></rect>
+            <text x="85" y="37" text-anchor="middle" fill="white" font-size="13" font-weight="bold">1. Planning</text>
+
+            <rect x="90" y="70" width="150" height="44" rx="8" fill="#8b5cf6"></rect>
+            <text x="165" y="97" text-anchor="middle" fill="white" font-size="13" font-weight="bold">2. Requirements</text>
+
+            <rect x="170" y="130" width="150" height="44" rx="8" fill="#06b6d4"></rect>
+            <text x="245" y="157" text-anchor="middle" fill="white" font-size="13" font-weight="bold">3. Design</text>
+
+            <rect x="250" y="190" width="150" height="44" rx="8" fill="#f59e0b"></rect>
+            <text x="325" y="217" text-anchor="middle" fill="white" font-size="13" font-weight="bold">4. Implementation</text>
+
+            <rect x="330" y="250" width="150" height="44" rx="8" fill="#ef4444"></rect>
+            <text x="405" y="277" text-anchor="middle" fill="white" font-size="13" font-weight="bold">5. Testing</text>
+
+            <rect x="410" y="310" width="200" height="44" rx="8" fill="#10b981"></rect>
+            <text x="510" y="337" text-anchor="middle" fill="white" font-size="13" font-weight="bold">6. Deployment &amp; Maintenance</text>
+
+            <!-- arrows -->
+            <line x1="85" y1="54" x2="105" y2="68" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arr)"></line>
+            <line x1="165" y1="114" x2="185" y2="128" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arr)"></line>
+            <line x1="245" y1="174" x2="265" y2="188" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arr)"></line>
+            <line x1="325" y1="234" x2="345" y2="248" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arr)"></line>
+            <line x1="405" y1="294" x2="425" y2="308" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arr)"></line>
+          </svg>
+        </div>
+      </div>
+
+      <div class="tab-content" id="wf-pros">
+        <div class="grid-2">
+          <div class="card">
+            <h3 style="color:var(--success)">✅ Advantages</h3>
+            <ul style="padding-left:18px;line-height:2">
+              <li>Simple and easy to understand</li>
+              <li>Well-documented at every phase</li>
+              <li>Easy to manage due to rigid structure</li>
+              <li>Works well for small, well-defined projects</li>
+              <li>Clear milestones and deliverables</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3 style="color:var(--danger)">❌ Disadvantages</h3>
+            <ul style="padding-left:18px;line-height:2">
+              <li>Inflexible to changing requirements</li>
+              <li>Testing happens late — bugs are costly</li>
+              <li>Poor model for complex, long-duration projects</li>
+              <li>Customer sees product only at the end</li>
+              <li>High risk for unclear or evolving requirements</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="wf-when">
+        <div class="card">
+          <h3>Best Suited For</h3>
+          <div class="pills" style="margin-bottom:14px">
+            <span class="pill green">Stable Requirements</span>
+            <span class="pill green">Short Projects</span>
+            <span class="pill green">Government/Defense</span>
+            <span class="pill green">Well-Understood Domain</span>
+          </div>
+          <p><strong>Example use cases:</strong> Building an embedded system for hardware with fixed specs, payroll software with well-defined rules, or government compliance systems.</p>
+          <p style="margin-top:10px"><strong>Avoid when:</strong> Requirements are expected to change, the project is large and complex, or early user feedback is critical.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ AGILE ═══ -->
+    <section class="page" id="page-agile">
+      <div class="card">
+        <h2>🔄 Agile Model</h2>
+        <p>Agile is an iterative and incremental approach that delivers working software in short cycles called <strong>sprints</strong> (typically 1–4 weeks). It emphasizes collaboration, customer feedback, and adaptability.</p>
+      </div>
+
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab(&#39;ag&#39;,&#39;overview&#39;,this)">Overview</button>
+        <button class="tab-btn" onclick="switchTab(&#39;ag&#39;,&#39;manifesto&#39;,this)">Manifesto</button>
+        <button class="tab-btn" onclick="switchTab(&#39;ag&#39;,&#39;pros&#39;,this)">Pros &amp; Cons</button>
+      </div>
+
+      <div class="tab-content active" id="ag-overview">
+        <div class="card">
+          <h3>Sprint Lifecycle</h3>
+          <div class="sprint-timeline">
+            <div class="sprint-box"><div class="sp-num">🗂️</div>Product<br>Backlog</div>
+            <div style="display:flex;align-items:center;color:var(--accent);font-size:1.3rem">→</div>
+            <div class="sprint-box"><div class="sp-num">📋</div>Sprint<br>Planning</div>
+            <div style="display:flex;align-items:center;color:var(--accent);font-size:1.3rem">→</div>
+            <div class="sprint-box"><div class="sp-num">💻</div>Sprint<br>Execution</div>
+            <div style="display:flex;align-items:center;color:var(--accent);font-size:1.3rem">→</div>
+            <div class="sprint-box"><div class="sp-num">🧪</div>Sprint<br>Review</div>
+            <div style="display:flex;align-items:center;color:var(--accent);font-size:1.3rem">→</div>
+            <div class="sprint-box"><div class="sp-num">🔍</div>Retrospective</div>
+            <div style="display:flex;align-items:center;color:var(--accent);font-size:1.3rem">→</div>
+            <div class="sprint-box" style="background:linear-gradient(135deg,#3b82f6,#1d4ed8)"><div class="sp-num">🚀</div>Shippable<br>Product</div>
+          </div>
+          <p style="margin-top:16px">Each sprint produces a potentially shippable increment. The cycle repeats until the product meets all goals.</p>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <h3>Key Roles</h3>
+            <ul style="padding-left:18px;line-height:2.2">
+              <li><strong>Product Owner</strong> — Defines priorities</li>
+              <li><strong>Scrum Master</strong> — Facilitates process</li>
+              <li><strong>Development Team</strong> — Builds the product</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Key Artifacts</h3>
+            <ul style="padding-left:18px;line-height:2.2">
+              <li><strong>Product Backlog</strong> — Full feature list</li>
+              <li><strong>Sprint Backlog</strong> — Current sprint tasks</li>
+              <li><strong>Burndown Chart</strong> — Progress tracking</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="ag-manifesto">
+        <div class="card">
+          <h3>The Agile Manifesto (2001)</h3>
+          <p style="margin-bottom:16px">Twelve principles, four core values:</p>
+          <div class="grid-2">
+            <div style="padding:18px;background:linear-gradient(135deg,#ecfdf5,#d1fae5);border-radius:10px;border-left:4px solid #10b981">
+              <strong>Individuals &amp; Interactions</strong><br>
+              <span style="color:var(--muted);font-size:0.85rem">over processes and tools</span>
+            </div>
+            <div style="padding:18px;background:linear-gradient(135deg,#eff6ff,#dbeafe);border-radius:10px;border-left:4px solid #3b82f6">
+              <strong>Working Software</strong><br>
+              <span style="color:var(--muted);font-size:0.85rem">over comprehensive documentation</span>
+            </div>
+            <div style="padding:18px;background:linear-gradient(135deg,#fef3c7,#fde68a);border-radius:10px;border-left:4px solid #f59e0b">
+              <strong>Customer Collaboration</strong><br>
+              <span style="color:var(--muted);font-size:0.85rem">over contract negotiation</span>
+            </div>
+            <div style="padding:18px;background:linear-gradient(135deg,#fdf2f8,#f5d0fe);border-radius:10px;border-left:4px solid #a855f7">
+              <strong>Responding to Change</strong><br>
+              <span style="color:var(--muted);font-size:0.85rem">over following a plan</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="ag-pros">
+        <div class="grid-2">
+          <div class="card">
+            <h3 style="color:var(--success)">✅ Advantages</h3>
+            <ul style="padding-left:18px;line-height:2">
+              <li>High adaptability to changing requirements</li>
+              <li>Continuous customer involvement</li>
+              <li>Early and frequent delivery of value</li>
+              <li>Reduced risk through incremental builds</li>
+              <li>Encourages teamwork and accountability</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3 style="color:var(--danger)">❌ Disadvantages</h3>
+            <ul style="padding-left:18px;line-height:2">
+              <li>Harder to predict timeline &amp; cost upfront</li>
+              <li>Requires active customer participation</li>
+              <li>Documentation can be neglected</li>
+              <li>Scope creep risk if backlog is unmanaged</li>
+              <li>Less effective for fixed-price contracts</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ SPIRAL ═══ -->
+    <section class="page" id="page-spiral">
+      <div class="card">
+        <h2>🌀 Spiral Model</h2>
+        <p>Proposed by Barry Boehm (1986), the Spiral model is <strong>risk-driven</strong>. It combines iterative development with the systematic aspects of Waterfall. Each loop (spiral) passes through four quadrants.</p>
+      </div>
+      <div class="card">
+        <h3>Four Quadrants of the Spiral</h3>
+        <div class="spiral-grid">
+          <div class="spiral-q sq1">🎯 Planning<br><small style="font-weight:400">Objectives, Alternatives, Constraints</small></div>
+          <div class="spiral-q sq2">⚠️ Risk Analysis<br><small style="font-weight:400">Identify &amp; resolve risks</small></div>
+          <div class="spiral-q sq4">📐 Engineering<br><small style="font-weight:400">Design, Code, Test</small></div>
+          <div class="spiral-q sq3">📊 Evaluation<br><small style="font-weight:400">Customer review &amp; feedback</small></div>
+        </div>
+        <p style="text-align:center;margin-top:12px;color:var(--muted);font-size:0.85rem">Each revolution of the spiral represents one development cycle</p>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="color:var(--success)">✅ Advantages</h3>
+          <ul style="padding-left:18px;line-height:2">
+            <li>Best model for risk management</li>
+            <li>Suitable for large, complex projects</li>
+            <li>Flexibility to add new requirements</li>
+            <li>Users see the system early via prototypes</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="color:var(--danger)">❌ Disadvantages</h3>
+          <ul style="padding-left:18px;line-height:2">
+            <li>Expensive — requires risk assessment expertise</li>
+            <li>Not suitable for small, low-risk projects</li>
+            <li>Complexity can make management difficult</li>
+            <li>End date is difficult to predict</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ ITERATIVE ═══ -->
+    <section class="page" id="page-iterative">
+      <div class="card">
+        <h2>🔁 Iterative Model</h2>
+        <p>The Iterative model starts with a simple initial implementation and then progressively enhances it through iterations. Unlike Agile, it doesn't always require continuous customer involvement after each cycle.</p>
+      </div>
+      <div class="card">
+        <h3>Iteration Flow</h3>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <div style="text-align:center;padding:16px;background:#eff6ff;border-radius:10px;border:2px solid #3b82f6;min-width:100px">
+            <div style="font-size:1.4rem">📌</div>
+            <strong>Requirements</strong>
+          </div>
+          <div style="font-size:1.3rem;color:var(--accent)">→</div>
+          <div style="text-align:center;padding:16px;background:#f0fdf4;border-radius:10px;border:2px solid #10b981;min-width:100px">
+            <div style="font-size:1.4rem">🏗️</div>
+            <strong>Design + Build</strong>
+          </div>
+          <div style="font-size:1.3rem;color:var(--accent)">→</div>
+          <div style="text-align:center;padding:16px;background:#fef9c3;border-radius:10px;border:2px solid #eab308;min-width:100px">
+            <div style="font-size:1.4rem">🧪</div>
+            <strong>Test</strong>
+          </div>
+          <div style="font-size:1.3rem;color:var(--accent)">→</div>
+          <div style="text-align:center;padding:16px;background:#fdf4ff;border-radius:10px;border:2px solid #a855f7;min-width:100px">
+            <div style="font-size:1.4rem">🔍</div>
+            <strong>Evaluate</strong>
+          </div>
+          <div style="font-size:1.5rem;color:var(--accent2);font-weight:bold">↩ repeat</div>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="color:var(--success)">✅ Advantages</h3>
+          <ul style="padding-left:18px;line-height:2">
+            <li>Partial working versions released early</li>
+            <li>Easier to test and debug per iteration</li>
+            <li>Changes can be incorporated in next iteration</li>
+            <li>Lower initial delivery risk</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="color:var(--danger)">❌ Disadvantages</h3>
+          <ul style="padding-left:18px;line-height:2">
+            <li>Total cost can be higher than Waterfall</li>
+            <li>May not be suitable if requirements are unclear</li>
+            <li>Requires good planning for iterations</li>
+            <li>Architecture issues may surface late</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ V-MODEL ═══ -->
+    <section class="page" id="page-vmodel">
+      <div class="card">
+        <h2>✅ V-Model (Verification &amp; Validation)</h2>
+        <p>The V-Model extends the Waterfall model. Each development phase on the <strong>left arm</strong> has a corresponding testing phase on the <strong>right arm</strong>. Testing is planned parallel to development — not as an afterthought.</p>
+      </div>
+      <div class="card">
+        <h3>The V-Shape Diagram</h3>
+        <svg class="diagram-svg" viewBox="0 0 660 300" xmlns="http://www.w3.org/2000/svg">
+          <!-- Left arm (dev) -->
+          <rect x="10" y="10" width="160" height="38" rx="8" fill="#3b82f6"></rect>
+          <text x="90" y="33" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Requirements Analysis</text>
+
+          <rect x="50" y="65" width="140" height="38" rx="8" fill="#8b5cf6"></rect>
+          <text x="120" y="88" text-anchor="middle" fill="white" font-size="12" font-weight="bold">System Design</text>
+
+          <rect x="90" y="120" width="130" height="38" rx="8" fill="#06b6d4"></rect>
+          <text x="155" y="143" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Architecture Design</text>
+
+          <rect x="130" y="175" width="120" height="38" rx="8" fill="#f59e0b"></rect>
+          <text x="190" y="198" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Module Design</text>
+
+          <!-- Bottom -->
+          <rect x="270" y="230" width="120" height="40" rx="8" fill="#1e3a5f"></rect>
+          <text x="330" y="254" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Coding</text>
+
+          <!-- Right arm (test) -->
+          <rect x="410" y="175" width="120" height="38" rx="8" fill="#f59e0b"></rect>
+          <text x="470" y="198" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Unit Testing</text>
+
+          <rect x="440" y="120" width="130" height="38" rx="8" fill="#06b6d4"></rect>
+          <text x="505" y="143" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Integration Testing</text>
+
+          <rect x="470" y="65" width="140" height="38" rx="8" fill="#8b5cf6"></rect>
+          <text x="540" y="88" text-anchor="middle" fill="white" font-size="12" font-weight="bold">System Testing</text>
+
+          <rect x="490" y="10" width="160" height="38" rx="8" fill="#3b82f6"></rect>
+          <text x="570" y="33" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Acceptance Testing</text>
+
+          <!-- Connecting lines -->
+          <line x1="90" y1="29" x2="570" y2="29" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="4"></line>
+          <line x1="120" y1="84" x2="540" y2="84" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="4"></line>
+          <line x1="155" y1="139" x2="505" y2="139" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="4"></line>
+          <line x1="190" y1="194" x2="470" y2="194" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="4"></line>
+
+          <!-- V lines -->
+          <polyline points="90,48 330,250 570,48" fill="none" stroke="#1e3a5f" stroke-width="2.5"></polyline>
+        </svg>
+        <p style="text-align:center;color:var(--muted);font-size:0.83rem;margin-top:8px">Dashed lines show which test phase verifies each development phase</p>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="color:var(--success)">✅ Advantages</h3>
+          <ul style="padding-left:18px;line-height:2">
+            <li>Defects found early due to parallel planning</li>
+            <li>Simple and easy to manage</li>
+            <li>Works well when requirements are well-defined</li>
+            <li>Every phase has specific deliverables</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="color:var(--danger)">❌ Disadvantages</h3>
+          <ul style="padding-left:18px;line-height:2">
+            <li>Very rigid — no mid-phase flexibility</li>
+            <li>No working software until late</li>
+            <li>Not suitable for changing requirements</li>
+            <li>Difficult to adapt to complex projects</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ PROTOTYPING ═══ -->
+    <section class="page" id="page-prototype">
+      <div class="card">
+        <h2>🧪 Prototyping Model</h2>
+        <p>In this model, a working prototype of the system is built early to gather user feedback before the actual product is developed. Especially useful when requirements are unclear.</p>
+      </div>
+      <div class="card">
+        <h3>Prototyping Lifecycle</h3>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px">
+          <div style="text-align:center;padding:14px;background:#fef3c7;border-radius:10px;border:2px solid #f59e0b;min-width:90px">
+            <div style="font-size:1.3rem">📝</div><strong>Gather Needs</strong>
+          </div>
+          <div style="font-size:1.2rem;color:var(--accent)">→</div>
+          <div style="text-align:center;padding:14px;background:#eff6ff;border-radius:10px;border:2px solid #3b82f6;min-width:90px">
+            <div style="font-size:1.3rem">🔧</div><strong>Build Prototype</strong>
+          </div>
+          <div style="font-size:1.2rem;color:var(--accent)">→</div>
+          <div style="text-align:center;padding:14px;background:#f0fdf4;border-radius:10px;border:2px solid #10b981;min-width:90px">
+            <div style="font-size:1.3rem">👤</div><strong>User Evaluates</strong>
+          </div>
+          <div style="font-size:1.2rem;color:var(--accent)">→</div>
+          <div style="text-align:center;padding:14px;background:#fdf4ff;border-radius:10px;border:2px solid #a855f7;min-width:90px">
+            <div style="font-size:1.3rem">🔄</div><strong>Refine</strong>
+          </div>
+          <div style="font-size:1.2rem;color:var(--accent)">→</div>
+          <div style="text-align:center;padding:14px;background:#ecfdf5;border-radius:10px;border:2px solid #059669;min-width:90px">
+            <div style="font-size:1.3rem">✅</div><strong>Final System</strong>
+          </div>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Types of Prototyping</h3>
+          <ul style="padding-left:18px;line-height:2.2">
+            <li><strong>Throwaway</strong> — Prototype is discarded</li>
+            <li><strong>Evolutionary</strong> — Prototype evolves into final system</li>
+            <li><strong>Incremental</strong> — Multiple prototypes built</li>
+            <li><strong>Extreme</strong> — Rapid UI focus, then backend</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="color:var(--success)">✅ / <span style="color:var(--danger)">❌</span></h3>
+          <p><strong style="color:var(--success)">Pros:</strong> Early user feedback, reduces misunderstandings, clear requirements.</p>
+          <p style="margin-top:8px"><strong style="color:var(--danger)">Cons:</strong> Can lead to scope creep; prototype may set wrong expectations; time-consuming iterations.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ COMPARE ═══ -->
+    <section class="page" id="page-compare">
+      <div class="card">
+        <h2>📊 Model Comparison</h2>
+        <p>Quick reference to choose the right SDLC model for your project.</p>
+      </div>
+      <div class="card" style="overflow-x:auto">
+        <table class="cmp-table">
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>Requirements</th>
+              <th>Flexibility</th>
+              <th>Testing</th>
+              <th>Customer Involvement</th>
+              <th>Best For</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>💧 Waterfall</strong></td>
+              <td>Fixed &amp; clear</td>
+              <td>❌ Very Low</td>
+              <td>Late (after coding)</td>
+              <td>Low</td>
+              <td>Small, stable projects</td>
+            </tr>
+            <tr>
+              <td><strong>🔄 Agile</strong></td>
+              <td>Evolving</td>
+              <td>✅ Very High</td>
+              <td>Each sprint</td>
+              <td>Continuous</td>
+              <td>Dynamic, customer-driven</td>
+            </tr>
+            <tr>
+              <td><strong>🌀 Spiral</strong></td>
+              <td>Partially known</td>
+              <td>✅ High</td>
+              <td>Each spiral</td>
+              <td>High</td>
+              <td>High-risk, large projects</td>
+            </tr>
+            <tr>
+              <td><strong>🔁 Iterative</strong></td>
+              <td>Partially known</td>
+              <td>🔶 Medium</td>
+              <td>Each iteration</td>
+              <td>Medium</td>
+              <td>Projects needing refinement</td>
+            </tr>
+            <tr>
+              <td><strong>✅ V-Model</strong></td>
+              <td>Fixed &amp; clear</td>
+              <td>❌ Very Low</td>
+              <td>Parallel (each phase)</td>
+              <td>Low</td>
+              <td>Safety-critical systems</td>
+            </tr>
+            <tr>
+              <td><strong>🧪 Prototyping</strong></td>
+              <td>Unclear/fuzzy</td>
+              <td>✅ High</td>
+              <td>Per prototype</td>
+              <td>Very High</td>
+              <td>UI-heavy, unclear needs</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card" style="margin-top:0">
+        <h3>How to Choose?</h3>
+        <div class="grid-2">
+          <div style="background:#f0fdf4;padding:14px;border-radius:10px;border-left:4px solid #10b981">
+            <strong>Requirements clear &amp; stable?</strong><br>
+            <span style="color:var(--muted);font-size:0.85rem">→ Waterfall or V-Model</span>
+          </div>
+          <div style="background:#eff6ff;padding:14px;border-radius:10px;border-left:4px solid #3b82f6">
+            <strong>Requirements changing frequently?</strong><br>
+            <span style="color:var(--muted);font-size:0.85rem">→ Agile or Iterative</span>
+          </div>
+          <div style="background:#fef3c7;padding:14px;border-radius:10px;border-left:4px solid #f59e0b">
+            <strong>High-risk, large project?</strong><br>
+            <span style="color:var(--muted);font-size:0.85rem">→ Spiral</span>
+          </div>
+          <div style="background:#fdf4ff;padding:14px;border-radius:10px;border-left:4px solid #a855f7">
+            <strong>Requirements unclear, need user input?</strong><br>
+            <span style="color:var(--muted);font-size:0.85rem">→ Prototyping</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ QUIZ ═══ -->
+    <section class="page" id="page-quiz">
+      <div class="card" style="margin-bottom:20px">
+        <h2>🎯 SDLC Quiz</h2>
+        <p>Test your knowledge of SDLC models and concepts.</p>
+      </div>
+      <div class="quiz-card" id="quiz-container">
+        <div class="quiz-header">
+          <span id="quiz-progress-label">Question 1 of 10</span>
+          <span id="quiz-score-label">Score: 0</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="quiz-progress-fill" style="width: 0%;"></div>
+        </div>
+        <div class="quiz-q" id="quiz-question">Which SDLC model follows a strict sequential process where each phase must be completed before the next begins?</div>
+        <div class="quiz-options" id="quiz-options"><div class="quiz-opt">Agile</div><div class="quiz-opt">Spiral</div><div class="quiz-opt">Waterfall</div><div class="quiz-opt">Iterative</div></div>
+        <div class="quiz-feedback" id="quiz-feedback"></div>
+        <div class="quiz-nav">
+          <span id="quiz-counter" style="color:var(--muted);font-size:0.85rem;align-self:center"></span>
+          <button class="btn btn-primary" id="quiz-next-btn" onclick="nextQuestion()" disabled="">Next →</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+// ───────────────────────────────────────────
+// NAVIGATION
+// ───────────────────────────────────────────
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('nav.sidebar button').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (id === 'quiz') initQuiz();
+}
+
+// ───────────────────────────────────────────
+// TABS
+// ───────────────────────────────────────────
+function switchTab(prefix, tabId, btn) {
+  document.querySelectorAll(`[id^="${prefix}-"]`).forEach(el => el.classList.remove('active'));
+  document.getElementById(prefix + '-' + tabId).classList.add('active');
+  btn.closest('.tabs').querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ───────────────────────────────────────────
+// PHASE INFO
+// ───────────────────────────────────────────
+const phaseData = [
+  { title: '1. Planning', info: 'Defines the project scope, objectives, budget, timeline, and resources. Feasibility studies (technical, financial, operational) are conducted. Output: Project Plan.' },
+  { title: '2. Requirements Analysis', info: 'Stakeholders identify what the system should do. Requirements are documented in a Software Requirements Specification (SRS). Covers functional and non-functional requirements.' },
+  { title: '3. System Design', info: 'Translates requirements into architecture. Includes High-Level Design (overall architecture) and Low-Level Design (module-level detail). Database schemas, APIs, and UI wireframes are created.' },
+  { title: '4. Implementation (Coding)', info: 'Developers write the actual source code following coding standards. Unit tests are written. Version control (Git) and code reviews are standard practices.' },
+  { title: '5. Testing & QA', info: 'Software is validated against requirements. Includes Unit Testing, Integration Testing, System Testing, and User Acceptance Testing (UAT). Bugs are tracked and fixed.' },
+  { title: '6. Deployment & Maintenance', info: 'Software is released to the production environment. Continuous monitoring, bug fixes, performance improvements, and feature updates are handled post-launch.' },
+];
+
+let activePhase = -1;
+function showPhaseInfo(idx) {
+  const tooltip = document.getElementById('phase-info');
+  if (activePhase === idx) {
+    tooltip.classList.remove('visible');
+    activePhase = -1;
+    return;
+  }
+  activePhase = idx;
+  const d = phaseData[idx];
+  tooltip.innerHTML = `<strong>${d.title}</strong><br><br>${d.info}`;
+  tooltip.classList.add('visible');
+}
+
+// ───────────────────────────────────────────
+// QUIZ
+// ───────────────────────────────────────────
+const quizQuestions = [
+  { q: 'Which SDLC model follows a strict sequential process where each phase must be completed before the next begins?', opts: ['Agile', 'Spiral', 'Waterfall', 'Iterative'], ans: 2, exp: 'The Waterfall model is strictly sequential — phases flow downward like a waterfall, and each must be fully complete before the next begins.' },
+  { q: 'In Agile, what is a short, time-boxed period during which a working increment of software is produced?', opts: ['Cycle', 'Sprint', 'Phase', 'Release'], ans: 1, exp: 'A Sprint (or Iteration) in Agile/Scrum is a 1–4 week time-box that results in a shippable product increment.' },
+  { q: 'Which model is specifically designed to manage risks in software development?', opts: ['Waterfall', 'V-Model', 'Spiral', 'Prototyping'], ans: 2, exp: 'The Spiral model by Barry Boehm is fundamentally risk-driven. Each spiral involves risk analysis and resolution.' },
+  { q: 'In the V-Model, what does the right arm of the "V" represent?', opts: ['Development phases', 'Testing phases', 'Planning phases', 'Deployment phases'], ans: 1, exp: 'The right arm of the V represents testing phases — each mirroring and validating the corresponding left-arm development phase.' },
+  { q: 'Which document is the primary output of the Requirements Analysis phase?', opts: ['Project Plan', 'Source Code', 'SRS (Software Requirements Specification)', 'Test Report'], ans: 2, exp: 'The SRS (Software Requirements Specification) documents all functional and non-functional requirements gathered during analysis.' },
+  { q: 'Which SDLC model is most suitable when customer requirements are unclear and early feedback is critical?', opts: ['Waterfall', 'V-Model', 'Prototyping', 'Iterative'], ans: 2, exp: 'Prototyping builds a working model early so users can provide feedback, clarifying unclear requirements before full development.' },
+  { q: 'The Agile Manifesto values "Working Software" over what?', opts: ['Customer collaboration', 'Responding to change', 'Comprehensive documentation', 'Individuals and interactions'], ans: 2, exp: 'One of the four core Agile values is: "Working software over comprehensive documentation."' },
+  { q: 'Which SDLC phase involves creating High-Level Design (HLD) and Low-Level Design (LLD)?', opts: ['Planning', 'Requirements Analysis', 'System Design', 'Testing'], ans: 2, exp: 'The System Design phase translates requirements into architecture, including HLD (overall structure) and LLD (module-level detail).' },
+  { q: 'User Acceptance Testing (UAT) is primarily conducted by whom?', opts: ['Developers', 'QA Engineers', 'End Users / Clients', 'Database Admins'], ans: 2, exp: 'UAT is performed by the actual end users or clients to verify that the system meets their real-world needs and expectations.' },
+  { q: 'Which of the following is NOT an advantage of the Agile model?', opts: ['High adaptability', 'Predictable fixed cost', 'Early delivery of value', 'Continuous customer feedback'], ans: 1, exp: 'Agile is iterative and evolving, making it difficult to predict total cost upfront — this is a known limitation, not an advantage.' },
+];
+
+let qIdx = 0, score = 0, answered = false;
+
+function initQuiz() {
+  qIdx = 0; score = 0; answered = false;
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = quizQuestions[qIdx];
+  document.getElementById('quiz-progress-label').textContent = `Question ${qIdx + 1} of ${quizQuestions.length}`;
+  document.getElementById('quiz-score-label').textContent = `Score: ${score}`;
+  document.getElementById('quiz-progress-fill').style.width = ((qIdx) / quizQuestions.length * 100) + '%';
+  document.getElementById('quiz-question').textContent = q.q;
+  document.getElementById('quiz-feedback').className = 'quiz-feedback';
+  document.getElementById('quiz-feedback').textContent = '';
+  document.getElementById('quiz-next-btn').disabled = true;
+  answered = false;
+
+  const optDiv = document.getElementById('quiz-options');
+  optDiv.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-opt';
+    div.textContent = opt;
+    div.onclick = () => selectAnswer(i, div);
+    optDiv.appendChild(div);
+  });
+}
+
+function selectAnswer(idx, el) {
+  if (answered) return;
+  answered = true;
+  const q = quizQuestions[qIdx];
+  const opts = document.querySelectorAll('.quiz-opt');
+  opts.forEach(o => o.style.pointerEvents = 'none');
+  const fb = document.getElementById('quiz-feedback');
+  if (idx === q.ans) {
+    el.classList.add('correct');
+    score++;
+    fb.textContent = '✅ Correct! ' + q.exp;
+    fb.className = 'quiz-feedback show ok';
+  } else {
+    el.classList.add('wrong');
+    opts[q.ans].classList.add('correct');
+    fb.textContent = '❌ Not quite. ' + q.exp;
+    fb.className = 'quiz-feedback show bad';
+  }
+  document.getElementById('quiz-score-label').textContent = `Score: ${score}`;
+  document.getElementById('quiz-next-btn').disabled = false;
+  if (qIdx === quizQuestions.length - 1) {
+    document.getElementById('quiz-next-btn').textContent = 'See Results 🏆';
+  }
+}
+
+function nextQuestion() {
+  qIdx++;
+  if (qIdx >= quizQuestions.length) {
+    showResults();
+    return;
+  }
+  renderQuestion();
+}
+
+function showResults() {
+  const pct = Math.round(score / quizQuestions.length * 100);
+  let emoji = pct >= 80 ? '🏆' : pct >= 50 ? '👍' : '📚';
+  let msg = pct >= 80 ? 'Excellent work! You have a strong grasp of SDLC models.' : pct >= 50 ? 'Good effort! Review the models you missed.' : 'Keep studying — revisit each model and try again!';
+  document.getElementById('quiz-container').innerHTML = `
+    <div class="score-card">
+      <div class="emoji">${emoji}</div>
+      <div class="score-num">${score}/${quizQuestions.length}</div>
+      <p style="font-size:1.1rem;font-weight:600;margin-top:8px">${pct}% Score</p>
+      <p style="margin-top:8px">${msg}</p>
+      <button class="btn btn-primary" style="margin-top:24px" onclick="document.getElementById('quiz-container').innerHTML='';initQuiz()">Try Again 🔁</button>
+    </div>
+  `;
+  document.getElementById('quiz-progress-fill').style.width = '100%';
+}
+
+// init quiz on first load (silently)
+initQuiz();
+</script>
+
+
+</body></html>
