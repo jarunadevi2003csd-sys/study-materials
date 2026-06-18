@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SDLC Models – Interactive Learning</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --primary: #1a73e8;
+    --primary-dark: #1558b0;
+    --accent: #34a853;
+    --warn: #fbbc04;
+    --danger: #ea4335;
+    --bg: #f8f9fa;
+    --surface: #ffffff;
+    --border: #dadce0;
+    --text: #202124;
+    --muted: #5f6368;
+    --sidebar-w: 220px;
+  }
+  body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; }
+
+  /* SIDEBAR */
+  #sidebar {
+    width: var(--sidebar-w); background: #1e3a5f; color: #fff;
+    display: flex; flex-direction: column; position: fixed; top: 0; left: 0; height: 100vh; z-index: 100;
+    overflow-y: auto;
+  }
+  #sidebar h1 { font-size: 1rem; padding: 18px 16px 12px; border-bottom: 1px solid rgba(255,255,255,.15); line-height: 1.4; }
+  #sidebar h1 span { display: block; font-size: .7rem; font-weight: 400; opacity: .7; margin-top: 4px; }
+  #sidebar nav a {
+    display: flex; align-items: center; gap: 10px; padding: 11px 16px;
+    color: rgba(255,255,255,.8); text-decoration: none; font-size: .85rem; transition: background .15s;
+  }
+  #sidebar nav a:hover { background: rgba(255,255,255,.1); color: #fff; }
+  #sidebar nav a.active { background: var(--primary); color: #fff; font-weight: 600; }
+  #sidebar nav a .icon { font-size: 1rem; width: 20px; text-align: center; }
+  .nav-section { padding: 8px 16px 4px; font-size: .65rem; text-transform: uppercase; letter-spacing: 1px; opacity: .5; margin-top: 6px; }
+
+  /* MAIN */
+  #main { margin-left: var(--sidebar-w); flex: 1; padding: 32px 36px; max-width: 1000px; }
+  .page { display: none; }
+  .page.active { display: block; }
+  h2 { font-size: 1.7rem; color: #1e3a5f; margin-bottom: 6px; }
+  .subtitle { color: var(--muted); margin-bottom: 24px; font-size: .95rem; }
+  h3 { font-size: 1.15rem; color: #1e3a5f; margin: 20px 0 10px; }
+
+  /* CARDS */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; margin-bottom: 20px; }
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .model-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 18px; cursor: pointer; transition: box-shadow .2s, transform .2s;
+  }
+  .model-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.1); transform: translateY(-2px); }
+  .model-card h4 { font-size: 1rem; color: #1e3a5f; margin-bottom: 6px; }
+  .model-card p { font-size: .82rem; color: var(--muted); line-height: 1.5; }
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: .72rem; font-weight: 600; margin-bottom: 8px; }
+  .badge-blue { background: #e8f0fe; color: #1a73e8; }
+  .badge-green { background: #e6f4ea; color: #137333; }
+  .badge-orange { background: #fce8e6; color: #c5221f; }
+  .badge-purple { background: #f3e8fd; color: #7b1fa2; }
+
+  /* PHASES */
+  .phases-row { display: flex; gap: 0; margin: 20px 0; flex-wrap: wrap; }
+  .phase-box {
+    flex: 1; min-width: 90px; padding: 14px 10px; text-align: center; cursor: pointer;
+    position: relative; transition: transform .15s;
+    border-right: 2px solid #fff;
+  }
+  .phase-box:last-child { border-right: none; }
+  .phase-box:hover { transform: scale(1.04); z-index: 2; }
+  .phase-box .ph-icon { font-size: 1.5rem; }
+  .phase-box .ph-name { font-size: .78rem; font-weight: 600; color: #fff; margin-top: 6px; }
+  .tooltip-box {
+    display: none; position: absolute; top: 110%; left: 50%; transform: translateX(-50%);
+    background: #1e3a5f; color: #fff; padding: 12px 14px; border-radius: 8px; font-size: .8rem;
+    min-width: 200px; max-width: 260px; z-index: 50; line-height: 1.5; text-align: left;
+    box-shadow: 0 4px 16px rgba(0,0,0,.3);
+  }
+  .tooltip-box::before { content: ''; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); border: 7px solid transparent; border-bottom-color: #1e3a5f; }
+  .phase-box:hover .tooltip-box { display: block; }
+
+  /* TABS */
+  .tabs { display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 20px; }
+  .tab-btn { padding: 9px 20px; cursor: pointer; border: none; background: none; font-size: .88rem; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -2px; transition: color .15s; }
+  .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* DIAGRAMS */
+  .waterfall-diagram { display: flex; flex-direction: column; gap: 4px; margin: 20px 0; }
+  .wf-step {
+    padding: 12px 20px; color: #fff; font-weight: 600; font-size: .9rem;
+    border-radius: 6px; position: relative;
+  }
+  .wf-step::after { content: '▼'; position: absolute; right: 16px; top: 50%; transform: translateY(-50%); opacity: .7; }
+  .wf-step:last-child::after { display: none; }
+
+  .agile-sprint { display: flex; gap: 12px; flex-wrap: wrap; margin: 20px 0; }
+  .sprint-box {
+    background: #e8f0fe; border: 2px solid #1a73e8; border-radius: 8px; padding: 14px 18px;
+    text-align: center; min-width: 100px; font-size: .82rem;
+  }
+  .sprint-box .s-num { font-size: 1.1rem; font-weight: 700; color: var(--primary); }
+  .sprint-box .s-lbl { color: var(--muted); margin-top: 4px; }
+  .sprint-center { display: flex; align-items: center; font-size: 1.4rem; color: var(--primary); }
+
+  .vmodel { display: flex; flex-direction: column; align-items: center; gap: 4px; margin: 20px 0; }
+  .vm-row { display: flex; gap: 10px; align-items: center; }
+  .vm-left { text-align: right; }
+  .vm-right { text-align: left; }
+  .vm-box { padding: 8px 16px; border-radius: 6px; color: #fff; font-size: .8rem; font-weight: 600; min-width: 140px; }
+  .vm-arrow { color: var(--muted); font-size: 1.2rem; }
+
+  .spiral-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+  .spiral-quad { padding: 16px; border-radius: 8px; font-size: .85rem; line-height: 1.5; }
+  .spiral-quad h4 { font-size: .9rem; font-weight: 700; margin-bottom: 6px; }
+
+  /* COMPARISON TABLE */
+  table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+  th { background: #1e3a5f; color: #fff; padding: 10px 12px; text-align: left; }
+  td { padding: 9px 12px; border-bottom: 1px solid var(--border); }
+  tr:nth-child(even) td { background: #f8f9fa; }
+  tr:hover td { background: #e8f0fe; }
+
+  /* QUIZ */
+  .quiz-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 24px; }
+  .question-text { font-size: 1rem; font-weight: 600; margin-bottom: 16px; }
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option-btn {
+    padding: 10px 16px; border: 2px solid var(--border); border-radius: 8px;
+    background: var(--surface); cursor: pointer; text-align: left; font-size: .88rem;
+    transition: border-color .15s, background .15s;
+  }
+  .option-btn:hover { border-color: var(--primary); background: #e8f0fe; }
+  .option-btn.correct { border-color: var(--accent); background: #e6f4ea; color: #137333; }
+  .option-btn.wrong { border-color: var(--danger); background: #fce8e6; color: #c5221f; }
+  .explanation { margin-top: 12px; padding: 10px 14px; border-radius: 6px; font-size: .85rem; display: none; }
+  .explanation.show { display: block; }
+  .explanation.correct-exp { background: #e6f4ea; color: #137333; border-left: 4px solid var(--accent); }
+  .explanation.wrong-exp { background: #fce8e6; color: #c5221f; border-left: 4px solid var(--danger); }
+  .quiz-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
+  .btn { padding: 9px 22px; border-radius: 6px; border: none; cursor: pointer; font-size: .88rem; font-weight: 600; }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-primary:hover { background: var(--primary-dark); }
+  .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+  .progress-bar { height: 6px; background: var(--border); border-radius: 3px; margin-bottom: 20px; }
+  .progress-fill { height: 100%; background: var(--primary); border-radius: 3px; transition: width .3s; }
+  .score-card { text-align: center; padding: 40px 20px; }
+  .score-num { font-size: 3rem; font-weight: 700; color: var(--primary); }
+  .score-sub { color: var(--muted); margin: 8px 0 24px; }
+
+  /* VIDEO */
+  .video-section { margin: 24px 0; }
+  .video-wrapper {
+    position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;
+    border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,.15);
+  }
+  .video-wrapper iframe {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    border: none; border-radius: 12px;
+  }
+  .video-meta { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; margin-top: 14px; display: flex; gap: 14px; align-items: flex-start; }
+  .video-meta .vm-icon { font-size: 2rem; }
+  .video-meta h4 { font-size: 1rem; font-weight: 600; color: #1e3a5f; margin-bottom: 4px; }
+  .video-meta p { font-size: .83rem; color: var(--muted); line-height: 1.5; }
+  .video-topics { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .topic-tag { background: #e8f0fe; color: var(--primary); border-radius: 20px; padding: 3px 12px; font-size: .75rem; font-weight: 600; }
+
+  /* PROS / CONS */
+  .pro-con { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 12px 0; }
+  .pro-list, .con-list { padding: 14px 18px; border-radius: 8px; }
+  .pro-list { background: #e6f4ea; }
+  .con-list { background: #fce8e6; }
+  .pro-list h4 { color: #137333; margin-bottom: 8px; }
+  .con-list h4 { color: #c5221f; margin-bottom: 8px; }
+  .pro-list li, .con-list li { font-size: .84rem; line-height: 1.7; margin-left: 16px; }
+
+  /* OVERVIEW HERO */
+  .hero { background: linear-gradient(135deg, #1e3a5f, #1a73e8); color: #fff; border-radius: 12px; padding: 32px 28px; margin-bottom: 24px; }
+  .hero h2 { color: #fff; font-size: 1.6rem; }
+  .hero p { opacity: .88; margin-top: 8px; line-height: 1.6; font-size: .95rem; }
+
+  @media (max-width: 700px) {
+    #sidebar { width: 60px; }
+    #sidebar h1, .nav-section, #sidebar nav a span { display: none; }
+    #main { margin-left: 60px; padding: 20px 14px; }
+    .pro-con { grid-template-columns: 1fr; }
+    .spiral-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside id="sidebar">
+  <h1>SDLC Models<span>Interactive Learning</span></h1>
+  <div class="nav-section">General</div>
+  <nav>
+    <a href="#" class="active" data-page="overview"><span class="icon">🏠</span><span>Overview</span></a>
+    <a href="#" data-page="phases"><span class="icon">🔄</span><span>SDLC Phases</span></a>
+    <a href="#" data-page="video"><span class="icon">🎬</span><span>Video</span></a>
+    <div class="nav-section">Models</div>
+    <a href="#" data-page="waterfall"><span class="icon">💧</span><span>Waterfall</span></a>
+    <a href="#" data-page="agile"><span class="icon">⚡</span><span>Agile</span></a>
+    <a href="#" data-page="spiral"><span class="icon">🌀</span><span>Spiral</span></a>
+    <a href="#" data-page="iterative"><span class="icon">🔁</span><span>Iterative</span></a>
+    <a href="#" data-page="vmodel"><span class="icon">✔️</span><span>V-Model</span></a>
+    <a href="#" data-page="proto"><span class="icon">🧪</span><span>Prototyping</span></a>
+    <div class="nav-section">Tools</div>
+    <a href="#" data-page="compare"><span class="icon">📊</span><span>Comparison</span></a>
+    <a href="#" data-page="quiz"><span class="icon">🧠</span><span>Quiz</span></a>
+  </nav>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main id="main">
+
+  <!-- OVERVIEW -->
+  <section class="page active" id="page-overview">
+    <div class="hero">
+      <h2>Software Development Life Cycle</h2>
+      <p>A structured process for planning, creating, testing, and delivering software systems. Choose a model based on project needs, team size, and requirements clarity.</p>
+    </div>
+    <div class="card-grid">
+      <div class="model-card" onclick="showPage('waterfall')">
+        <div class="badge badge-blue">Sequential</div>
+        <h4>💧 Waterfall</h4>
+        <p>Linear phase-by-phase model. Best for well-defined, stable requirements.</p>
+      </div>
+      <div class="model-card" onclick="showPage('agile')">
+        <div class="badge badge-green">Iterative</div>
+        <h4>⚡ Agile</h4>
+        <p>Short sprints with continuous feedback. Ideal for evolving requirements.</p>
+      </div>
+      <div class="model-card" onclick="showPage('spiral')">
+        <div class="badge badge-orange">Risk-Driven</div>
+        <h4>🌀 Spiral</h4>
+        <p>Combines iterative development with systematic risk management.</p>
+      </div>
+      <div class="model-card" onclick="showPage('iterative')">
+        <div class="badge badge-purple">Incremental</div>
+        <h4>🔁 Iterative</h4>
+        <p>Build, evaluate, refine in repeated cycles until the product is complete.</p>
+      </div>
+      <div class="model-card" onclick="showPage('vmodel')">
+        <div class="badge badge-blue">Verification</div>
+        <h4>✔️ V-Model</h4>
+        <p>Testing planned in parallel with each development phase.</p>
+      </div>
+      <div class="model-card" onclick="showPage('proto')">
+        <div class="badge badge-green">Exploratory</div>
+        <h4>🧪 Prototyping</h4>
+        <p>Build prototypes early to clarify requirements and validate ideas.</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Why SDLC Matters</h3>
+      <p style="color:var(--muted);line-height:1.7;font-size:.9rem;">SDLC provides a disciplined framework that improves software quality, reduces costs, ensures timely delivery, and aligns stakeholder expectations. Choosing the right model is critical to project success.</p>
+    </div>
+  </section>
+
+  <!-- PHASES -->
+  <section class="page" id="page-phases">
+    <h2>SDLC Phases</h2>
+    <p class="subtitle">Hover over any phase to see details</p>
+    <div class="phases-row">
+      <div class="phase-box" style="background:#1a73e8">
+        <div class="ph-icon">📋</div>
+        <div class="ph-name">Planning</div>
+        <div class="tooltip-box"><strong>Planning</strong><br>Define project scope, feasibility, cost estimation, resource allocation, and risk assessment. This phase sets the foundation for the entire project.</div>
+      </div>
+      <div class="phase-box" style="background:#34a853">
+        <div class="ph-icon">🔍</div>
+        <div class="ph-name">Requirements</div>
+        <div class="tooltip-box"><strong>Requirements Analysis</strong><br>Gather and document functional and non-functional requirements from stakeholders. Produces the Software Requirements Specification (SRS).</div>
+      </div>
+      <div class="phase-box" style="background:#1e3a5f">
+        <div class="ph-icon">🏗️</div>
+        <div class="ph-name">Design</div>
+        <div class="tooltip-box"><strong>System Design</strong><br>Translate requirements into architecture blueprints covering data models, system architecture, UI design, and technology choices.</div>
+      </div>
+      <div class="phase-box" style="background:#7b1fa2">
+        <div class="ph-icon">💻</div>
+        <div class="ph-name">Implementation</div>
+        <div class="tooltip-box"><strong>Implementation / Coding</strong><br>Developers write source code based on the design documents. Follows coding standards and uses version control systems.</div>
+      </div>
+      <div class="phase-box" style="background:#e65100">
+        <div class="ph-icon">🧪</div>
+        <div class="ph-name">Testing</div>
+        <div class="tooltip-box"><strong>Testing &amp; QA</strong><br>Verify the software meets requirements through unit tests, integration tests, system tests, and UAT. Defects are tracked and resolved.</div>
+      </div>
+      <div class="phase-box" style="background:#00796b">
+        <div class="ph-icon">🚀</div>
+        <div class="ph-name">Deployment</div>
+        <div class="tooltip-box"><strong>Deployment</strong><br>Release the tested software to the production environment. Includes release management, CI/CD pipelines, and rollback planning.</div>
+      </div>
+      <div class="phase-box" style="background:#5d4037">
+        <div class="ph-icon">🔧</div>
+        <div class="ph-name">Maintenance</div>
+        <div class="tooltip-box"><strong>Maintenance</strong><br>Ongoing bug fixes, performance improvements, feature updates, and security patches after deployment. Longest phase in the SDLC.</div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Key Deliverables per Phase</h3>
+      <table>
+        <thead><tr><th>Phase</th><th>Key Deliverable</th><th>Who's Involved</th></tr></thead>
+        <tbody>
+          <tr><td>Planning</td><td>Project Plan, Feasibility Report</td><td>PM, Stakeholders</td></tr>
+          <tr><td>Requirements</td><td>SRS Document</td><td>BA, Clients, PM</td></tr>
+          <tr><td>Design</td><td>Architecture Document, Prototypes</td><td>Architects, Designers</td></tr>
+          <tr><td>Implementation</td><td>Source Code, Unit Tests</td><td>Developers</td></tr>
+          <tr><td>Testing</td><td>Test Reports, Defect Logs</td><td>QA Engineers</td></tr>
+          <tr><td>Deployment</td><td>Release Notes, Runbook</td><td>DevOps, PM</td></tr>
+          <tr><td>Maintenance</td><td>Patch Releases, Update Logs</td><td>Support, Developers</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- VIDEO -->
+  <section class="page" id="page-video">
+    <h2>🎬 SDLC Video Resource</h2>
+    <p class="subtitle">Watch this comprehensive tutorial covering all major SDLC models</p>
+    <div class="video-section">
+      <div class="video-wrapper">
+        <iframe
+          src="https://www.youtube.com/embed/U0CvH9pygsk"
+          title="SDLC Models Tutorial | Types of SDLC Models | Software Development Life Cycle Models Overview"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen>
+        </iframe>
+      </div>
+      <div class="video-meta">
+        <div class="vm-icon">▶️</div>
+        <div>
+          <h4>SDLC Models Tutorial — Types of SDLC Models Overview</h4>
+          <p>A detailed walkthrough of all major Software Development Life Cycle models, including Waterfall, Agile, Spiral, Iterative, V-Model, and Prototyping. Covers when to use each model with real-world examples.</p>
+          <div class="video-topics">
+            <span class="topic-tag">Waterfall</span>
+            <span class="topic-tag">Agile</span>
+            <span class="topic-tag">Spiral</span>
+            <span class="topic-tag">V-Model</span>
+            <span class="topic-tag">Iterative</span>
+            <span class="topic-tag">Prototyping</span>
+            <span class="topic-tag">SDLC Phases</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:20px;">
+      <h3>What You'll Learn</h3>
+      <p style="color:var(--muted);line-height:1.8;font-size:.9rem;">
+        This video covers the fundamentals of each SDLC model — how they differ in structure, when to apply them, their advantages and trade-offs, and how teams choose the right model for their project. After watching, explore the individual model pages in the sidebar for interactive diagrams and a deeper dive into each approach.
+      </p>
+    </div>
+  </section>
+
+  <!-- WATERFALL -->
+  <section class="page" id="page-waterfall">
+    <h2>💧 Waterfall Model</h2>
+    <p class="subtitle">Linear, sequential software development methodology</p>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab(this,'wf')">Overview</button>
+      <button class="tab-btn" onclick="switchTab(this,'wf')">Pros &amp; Cons</button>
+      <button class="tab-btn" onclick="switchTab(this,'wf')">When to Use</button>
+    </div>
+    <div class="tab-content active" id="wf-tab-0">
+      <p style="color:var(--muted);line-height:1.7;margin-bottom:16px;font-size:.9rem;">The Waterfall model flows strictly downward through phases. Each phase must be fully complete before the next begins, making it predictable but inflexible.</p>
+      <div class="waterfall-diagram">
+        <div class="wf-step" style="background:#1a73e8;">📋 Requirements</div>
+        <div class="wf-step" style="background:#1558b0;">🏗️ System Design</div>
+        <div class="wf-step" style="background:#1e3a5f;">💻 Implementation</div>
+        <div class="wf-step" style="background:#7b1fa2;">🧪 Testing</div>
+        <div class="wf-step" style="background:#00796b;">🚀 Deployment</div>
+        <div class="wf-step" style="background:#5d4037;border-radius:6px;">🔧 Maintenance</div>
+      </div>
+    </div>
+    <div class="tab-content" id="wf-tab-1">
+      <div class="pro-con">
+        <div class="pro-list">
+          <h4>✅ Pros</h4>
+          <ul>
+            <li>Simple and easy to manage</li>
+            <li>Clear milestones and deliverables</li>
+            <li>Well-documented process</li>
+            <li>Works well for small, fixed-scope projects</li>
+            <li>Easy to measure progress</li>
+          </ul>
+        </div>
+        <div class="con-list">
+          <h4>❌ Cons</h4>
+          <ul>
+            <li>Inflexible to changing requirements</li>
+            <li>Late discovery of defects</li>
+            <li>Customer sees product only at the end</li>
+            <li>High risk for long, complex projects</li>
+            <li>No working software until late stages</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="tab-content" id="wf-tab-2">
+      <div class="card">
+        <h3>Best suited when:</h3>
+        <ul style="color:var(--muted);line-height:2;font-size:.9rem;margin-left:20px;">
+          <li>Requirements are well-defined and unlikely to change</li>
+          <li>Project is short-duration with a small team</li>
+          <li>Technology is well-understood</li>
+          <li>Strict documentation and regulatory compliance are needed</li>
+          <li>Example: Government contracts, construction software, embedded systems</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- AGILE -->
+  <section class="page" id="page-agile">
+    <h2>⚡ Agile Model</h2>
+    <p class="subtitle">Iterative, collaborative approach with continuous delivery</p>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab(this,'ag')">Overview</button>
+      <button class="tab-btn" onclick="switchTab(this,'ag')">Pros &amp; Cons</button>
+      <button class="tab-btn" onclick="switchTab(this,'ag')">When to Use</button>
+    </div>
+    <div class="tab-content active" id="ag-tab-0">
+      <p style="color:var(--muted);line-height:1.7;margin-bottom:16px;font-size:.9rem;">Agile delivers software in short iterations (sprints, usually 1–4 weeks). Teams plan, build, test, and review in each cycle with continuous customer collaboration.</p>
+      <div class="agile-sprint">
+        <div class="sprint-box"><div class="s-num">1</div><div class="s-lbl">Sprint<br>Plan</div></div>
+        <div class="sprint-center">→</div>
+        <div class="sprint-box" style="background:#e6f4ea;border-color:#34a853"><div class="s-num">2</div><div class="s-lbl">Design &amp;<br>Build</div></div>
+        <div class="sprint-center">→</div>
+        <div class="sprint-box" style="background:#fff3e0;border-color:#e65100"><div class="s-num">3</div><div class="s-lbl">Test &amp;<br>Review</div></div>
+        <div class="sprint-center">→</div>
+        <div class="sprint-box" style="background:#f3e8fd;border-color:#7b1fa2"><div class="s-num">4</div><div class="s-lbl">Retrospect<br>&amp; Release</div></div>
+        <div class="sprint-center" style="font-size:.8rem;color:var(--muted)">🔁 repeat</div>
+      </div>
+      <div class="card">
+        <h3>Agile Values (Manifesto)</h3>
+        <ul style="color:var(--muted);line-height:2;font-size:.9rem;margin-left:20px;">
+          <li>Individuals and interactions <strong>over</strong> processes and tools</li>
+          <li>Working software <strong>over</strong> comprehensive documentation</li>
+          <li>Customer collaboration <strong>over</strong> contract negotiation</li>
+          <li>Responding to change <strong>over</strong> following a plan</li>
+        </ul>
+      </div>
+    </div>
+    <div class="tab-content" id="ag-tab-1">
+      <div class="pro-con">
+        <div class="pro-list"><h4>✅ Pros</h4><ul><li>Highly flexible to change</li><li>Continuous customer involvement</li><li>Early and frequent deliverables</li><li>Better quality through iterative testing</li><li>Strong team collaboration</li></ul></div>
+        <div class="con-list"><h4>❌ Cons</h4><ul><li>Hard to predict final cost and timeline</li><li>Requires experienced, self-organizing teams</li><li>Less documentation</li><li>Can suffer from scope creep</li><li>Difficult to scale for large organizations</li></ul></div>
+      </div>
+    </div>
+    <div class="tab-content" id="ag-tab-2">
+      <div class="card"><h3>Best suited when:</h3><ul style="color:var(--muted);line-height:2;font-size:.9rem;margin-left:20px;"><li>Requirements evolve or are unclear at the start</li><li>Fast time-to-market is a priority</li><li>Customer can be actively involved throughout</li><li>Team is small to medium-sized and co-located</li><li>Example: Startups, web apps, mobile products, SaaS</li></ul></div>
+    </div>
+  </section>
+
+  <!-- SPIRAL -->
+  <section class="page" id="page-spiral">
+    <h2>🌀 Spiral Model</h2>
+    <p class="subtitle">Risk-driven iterative model combining Waterfall and prototyping</p>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab(this,'sp')">Overview</button>
+      <button class="tab-btn" onclick="switchTab(this,'sp')">Pros &amp; Cons</button>
+      <button class="tab-btn" onclick="switchTab(this,'sp')">When to Use</button>
+    </div>
+    <div class="tab-content active" id="sp-tab-0">
+      <p style="color:var(--muted);line-height:1.7;margin-bottom:16px;font-size:.9rem;">Each loop of the spiral passes through four quadrants. Risk analysis is performed at every turn, making it ideal for large, high-risk projects.</p>
+      <div class="spiral-grid">
+        <div class="spiral-quad" style="background:#e8f0fe"><h4 style="color:#1a73e8">📋 Quadrant 1: Planning</h4>Define objectives, alternatives, and constraints for this iteration cycle.</div>
+        <div class="spiral-quad" style="background:#fce8e6"><h4 style="color:#c5221f">⚠️ Quadrant 2: Risk Analysis</h4>Identify, analyze, and resolve risks. Build prototypes if needed to reduce uncertainty.</div>
+        <div class="spiral-quad" style="background:#e6f4ea"><h4 style="color:#137333">🏗️ Quadrant 3: Engineering</h4>Design, code, and test the product for this iteration.</div>
+        <div class="spiral-quad" style="background:#fff3e0"><h4 style="color:#e65100">✅ Quadrant 4: Evaluation</h4>Customer evaluates the current build and provides feedback for the next loop.</div>
+      </div>
+    </div>
+    <div class="tab-content" id="sp-tab-1">
+      <div class="pro-con"><div class="pro-list"><h4>✅ Pros</h4><ul><li>Strong risk management at each cycle</li><li>Accommodates changing requirements</li><li>Early prototypes clarify requirements</li><li>Well-suited for large, complex projects</li><li>Reusable components across spirals</li></ul></div><div class="con-list"><h4>❌ Cons</h4><ul><li>Expensive — requires risk experts</li><li>Complex to manage</li><li>Not suitable for small projects</li><li>Can be hard to define milestones</li><li>Time-consuming risk analysis</li></ul></div></div>
+    </div>
+    <div class="tab-content" id="sp-tab-2">
+      <div class="card"><h3>Best suited when:</h3><ul style="color:var(--muted);line-height:2;font-size:.9rem;margin-left:20px;"><li>High-risk, large-scale project</li><li>Requirements are complex and not fully known upfront</li><li>Budget allows for comprehensive risk management</li><li>Long project duration with multiple releases</li><li>Example: Military software, aerospace, banking systems</li></ul></div>
+    </div>
+  </section>
+
+  <!-- ITERATIVE -->
+  <section class="page" id="page-iterative">
+    <h2>🔁 Iterative Model</h2>
+    <p class="subtitle">Build incrementally, improving with each iteration</p>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab(this,'it')">Overview</button>
+      <button class="tab-btn" onclick="switchTab(this,'it')">Pros &amp; Cons</button>
+      <button class="tab-btn" onclick="switchTab(this,'it')">When to Use</button>
+    </div>
+    <div class="tab-content active" id="it-tab-0">
+      <p style="color:var(--muted);line-height:1.7;margin-bottom:16px;font-size:.9rem;">The iterative model starts with a simple implementation and progressively adds functionality. Each iteration produces a working version of the software that is refined over time.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin:20px 0;align-items:center">
+        <div style="background:#e8f0fe;border:2px solid #1a73e8;border-radius:8px;padding:12px 16px;text-align:center;font-size:.83rem"><strong>Iteration 1</strong><br><span style="color:var(--muted)">Core features</span></div>
+        <div style="font-size:1.4rem;color:var(--primary)">→</div>
+        <div style="background:#e6f4ea;border:2px solid #34a853;border-radius:8px;padding:12px 16px;text-align:center;font-size:.83rem"><strong>Iteration 2</strong><br><span style="color:var(--muted)">Enhanced UI</span></div>
+        <div style="font-size:1.4rem;color:var(--primary)">→</div>
+        <div style="background:#fff3e0;border:2px solid #e65100;border-radius:8px;padding:12px 16px;text-align:center;font-size:.83rem"><strong>Iteration 3</strong><br><span style="color:var(--muted)">Full features</span></div>
+        <div style="font-size:1.4rem;color:var(--primary)">→</div>
+        <div style="background:#f3e8fd;border:2px solid #7b1fa2;border-radius:8px;padding:12px 16px;text-align:center;font-size:.83rem"><strong>Iteration N</strong><br><span style="color:var(--muted)">Final product</span></div>
+      </div>
+    </div>
+    <div class="tab-content" id="it-tab-1">
+      <div class="pro-con"><div class="pro-list"><h4>✅ Pros</h4><ul><li>Working software available early</li><li>Easier to test and debug smaller modules</li><li>Feedback incorporated between iterations</li><li>Reduced risk through incremental delivery</li><li>Better resource management</li></ul></div><div class="con-list"><h4>❌ Cons</h4><ul><li>Total cost can be hard to predict</li><li>System architecture may degrade over iterations</li><li>Requires clear milestones</li><li>Not suitable if requirements change drastically</li><li>Can lead to scope creep</li></ul></div></div>
+    </div>
+    <div class="tab-content" id="it-tab-2">
+      <div class="card"><h3>Best suited when:</h3><ul style="color:var(--muted);line-height:2;font-size:.9rem;margin-left:20px;"><li>Most requirements are known, but some may evolve</li><li>A working product is needed early in development</li><li>Large project that can be broken into chunks</li><li>User feedback needs to be incorporated gradually</li><li>Example: ERP systems, e-commerce platforms</li></ul></div>
+    </div>
+  </section>
+
+  <!-- V-MODEL -->
+  <section class="page" id="page-vmodel">
+    <h2>✔️ V-Model</h2>
+    <p class="subtitle">Verification and Validation model — testing at every phase</p>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab(this,'vm')">Overview</button>
+      <button class="tab-btn" onclick="switchTab(this,'vm')">Pros &amp; Cons</button>
+      <button class="tab-btn" onclick="switchTab(this,'vm')">When to Use</button>
+    </div>
+    <div class="tab-content active" id="vm-tab-0">
+      <p style="color:var(--muted);line-height:1.7;margin-bottom:16px;font-size:.9rem;">An extension of Waterfall where every development phase has a corresponding testing phase. Development goes down the left arm; testing goes up the right arm.</p>
+      <div class="vmodel">
+        <div class="vm-row">
+          <div class="vm-left"><div class="vm-box" style="background:#1a73e8">Requirements</div></div>
+          <div class="vm-arrow">↔</div>
+          <div class="vm-right"><div class="vm-box" style="background:#00796b">Acceptance Testing</div></div>
+        </div>
+        <div class="vm-row">
+          <div style="width:30px"></div>
+          <div class="vm-left"><div class="vm-box" style="background:#1558b0;margin-right:20px">System Design</div></div>
+          <div class="vm-arrow">↔</div>
+          <div class="vm-right"><div class="vm-box" style="background:#00695c;margin-left:20px">System Testing</div></div>
+        </div>
+        <div class="vm-row">
+          <div style="width:60px"></div>
+          <div class="vm-left"><div class="vm-box" style="background:#1e3a5f;margin-right:40px">Architecture</div></div>
+          <div class="vm-arrow">↔</div>
+          <div class="vm-right"><div class="vm-box" style="background:#33691e;margin-left:40px">Integration Testing</div></div>
+        </div>
+        <div class="vm-row">
+          <div style="width:90px"></div>
+          <div class="vm-left"><div class="vm-box" style="background:#4a148c;margin-right:60px">Module Design</div></div>
+          <div class="vm-arrow">↔</div>
+          <div class="vm-right"><div class="vm-box" style="background:#1b5e20;margin-left:60px">Unit Testing</div></div>
+        </div>
+        <div class="vm-row">
+          <div style="width:120px"></div>
+          <div><div class="vm-box" style="background:#212121">Coding</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-content" id="vm-tab-1">
+      <div class="pro-con"><div class="pro-list"><h4>✅ Pros</h4><ul><li>Testing is planned from the start</li><li>Defects found early reduce costs</li><li>Clear structure with well-defined stages</li><li>Works well for safety-critical systems</li><li>High chance of project success</li></ul></div><div class="con-list"><h4>❌ Cons</h4><ul><li>Rigid — no flexibility for changing requirements</li><li>No working prototype until late</li><li>Not suitable for complex, iterative projects</li><li>Expensive to fix issues found late</li><li>Requires all requirements upfront</li></ul></div></div>
+    </div>
+    <div class="tab-content" id="vm-tab-2">
+      <div class="card"><h3>Best suited when:</h3><ul style="color:var(--muted);line-height:2;font-size:.9rem;margin-left:20px;"><li>Requirements are fixed and clearly defined</li><li>Project involves safety-critical systems</li><li>Thorough testing is mandatory at every stage</li><li>Short project with a stable scope</li><li>Example: Medical devices, avionics, automotive software</li></ul></div>
+    </div>
+  </section>
+
+  <!-- PROTOTYPING -->
+  <section class="page" id="page-proto">
+    <h2>🧪 Prototyping Model</h2>
+    <p class="subtitle">Build early prototypes to clarify requirements and gather feedback</p>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab(this,'pt')">Overview</button>
+      <button class="tab-btn" onclick="switchTab(this,'pt')">Pros &amp; Cons</button>
+      <button class="tab-btn" onclick="switchTab(this,'pt')">When to Use</button>
+    </div>
+    <div class="tab-content active" id="pt-tab-0">
+      <p style="color:var(--muted);line-height:1.7;margin-bottom:16px;font-size:.9rem;">A working prototype is built, evaluated, and refined based on user feedback before the actual system is developed. Bridges the gap between initial concept and final product.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin:20px 0;align-items:center">
+        <div style="background:#e8f0fe;border-radius:8px;padding:12px;text-align:center;font-size:.82rem;min-width:100px"><strong>Identify<br>Requirements</strong></div>
+        <span style="color:var(--primary);font-size:1.4rem">→</span>
+        <div style="background:#e6f4ea;border-radius:8px;padding:12px;text-align:center;font-size:.82rem;min-width:100px"><strong>Build<br>Prototype</strong></div>
+        <span style="color:var(--primary);font-size:1.4rem">→</span>
+        <div style="background:#fff3e0;border-radius:8px;padding:12px;text-align:center;font-size:.82rem;min-width:100px"><strong>User<br>Evaluation</strong></div>
+        <span style="color:var(--primary);font-size:1.4rem">→</span>
+        <div style="background:#fce8e6;border-radius:8px;padding:12px;text-align:center;font-size:.82rem;min-width:100px"><strong>Refine<br>Prototype</strong></div>
+        <span style="color:var(--primary);font-size:1.4rem">↺</span>
+        <div style="background:#f3e8fd;border-radius:8px;padding:12px;text-align:center;font-size:.82rem;min-width:100px"><strong>Implement<br>Final System</strong></div>
+      </div>
+    </div>
+    <div class="tab-content" id="pt-tab-1">
+      <div class="pro-con"><div class="pro-list"><h4>✅ Pros</h4><ul><li>Users see the product early</li><li>Requirements gaps identified quickly</li><li>Reduces risk of building the wrong product</li><li>Increases user involvement and satisfaction</li><li>Helpful for UI/UX-intensive apps</li></ul></div><div class="con-list"><h4>❌ Cons</h4><ul><li>Prototype may set wrong expectations</li><li>Time-consuming prototype iteration</li><li>Incomplete analysis — users may focus on UI only</li><li>Can lead to "prototype creep"</li><li>Poor planning if thrown away after evaluation</li></ul></div></div>
+    </div>
+    <div class="tab-content" id="pt-tab-2">
+      <div class="card"><h3>Best suited when:</h3><ul style="color:var(--muted);line-height:2;font-size:.9rem;margin-left:20px;"><li>Requirements are unclear or frequently changing</li><li>User interface design is critical to success</li><li>Customer is uncertain about what they want</li><li>New technology is being explored</li><li>Example: Consumer-facing apps, innovative products, R&amp;D projects</li></ul></div>
+    </div>
+  </section>
+
+  <!-- COMPARISON -->
+  <section class="page" id="page-compare">
+    <h2>📊 Model Comparison</h2>
+    <p class="subtitle">Quick reference to choose the right SDLC model</p>
+    <div class="card" style="overflow-x:auto">
+      <table>
+        <thead>
+          <tr><th>Model</th><th>Flexibility</th><th>Risk Handling</th><th>Customer Involvement</th><th>Best For</th><th>Team Size</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>💧 Waterfall</td><td>Low</td><td>Low</td><td>Minimal</td><td>Fixed requirements</td><td>Any</td></tr>
+          <tr><td>⚡ Agile</td><td>Very High</td><td>Medium</td><td>Continuous</td><td>Evolving requirements</td><td>Small–Medium</td></tr>
+          <tr><td>🌀 Spiral</td><td>High</td><td>Very High</td><td>Per cycle</td><td>High-risk projects</td><td>Large</td></tr>
+          <tr><td>🔁 Iterative</td><td>Medium</td><td>Medium</td><td>Per iteration</td><td>Incremental delivery</td><td>Medium–Large</td></tr>
+          <tr><td>✔️ V-Model</td><td>Low</td><td>High</td><td>Minimal</td><td>Safety-critical</td><td>Any</td></tr>
+          <tr><td>🧪 Prototyping</td><td>High</td><td>Medium</td><td>High</td><td>Unclear requirements</td><td>Small</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Decision Guide</h3>
+      <table>
+        <thead><tr><th>If you need…</th><th>Choose</th></tr></thead>
+        <tbody>
+          <tr><td>Fastest time-to-market with evolving features</td><td>⚡ Agile</td></tr>
+          <tr><td>Strict documentation and fixed requirements</td><td>💧 Waterfall</td></tr>
+          <tr><td>Maximum risk mitigation on a large project</td><td>🌀 Spiral</td></tr>
+          <tr><td>Safety-critical system with mandatory test phases</td><td>✔️ V-Model</td></tr>
+          <tr><td>Gradual delivery of a large system</td><td>🔁 Iterative</td></tr>
+          <tr><td>Validate ideas with users before full build</td><td>🧪 Prototyping</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section class="page" id="page-quiz">
+    <h2>🧠 SDLC Quiz</h2>
+    <p class="subtitle">Test your knowledge — 10 questions</p>
+    <div class="progress-bar"><div class="progress-fill" id="quiz-progress" style="width:0%"></div></div>
+    <div id="quiz-area"></div>
+  </section>
+
+</main>
+
+<script>
+// ── NAV ──────────────────────────────────────────
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('#sidebar nav a').forEach(a => a.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelector(`[data-page="${id}"]`).classList.add('active');
+  window.scrollTo(0, 0);
+}
+document.querySelectorAll('#sidebar nav a[data-page]').forEach(a => {
+  a.addEventListener('click', e => { e.preventDefault(); showPage(a.dataset.page); });
+});
+
+// ── TABS ─────────────────────────────────────────
+function switchTab(btn, prefix) {
+  const parent = btn.closest('section');
+  const btns = parent.querySelectorAll('.tab-btn');
+  const idx = Array.from(btns).indexOf(btn);
+  btns.forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  parent.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+  parent.querySelector(`#${prefix}-tab-${idx}`).classList.add('active');
+}
+
+// ── QUIZ ─────────────────────────────────────────
+const questions = [
+  { q: "Which SDLC model requires all requirements to be defined before development begins?",
+    opts: ["Agile", "Waterfall", "Spiral", "Prototyping"], ans: 1,
+    exp: "Waterfall requires complete requirements upfront before moving to the next phase." },
+  { q: "What is the typical duration of an Agile sprint?",
+    opts: ["1–4 weeks", "3–6 months", "1 year", "1 day"], ans: 0,
+    exp: "Agile sprints are short, time-boxed iterations, typically 1–4 weeks long." },
+  { q: "Which model is best suited for high-risk, large-scale projects?",
+    opts: ["Waterfall", "Prototyping", "Spiral", "Iterative"], ans: 2,
+    exp: "The Spiral model includes dedicated risk analysis at every cycle, making it ideal for high-risk projects." },
+  { q: "In the V-Model, each development phase has a corresponding:",
+    opts: ["Design phase", "Testing phase", "Deployment phase", "Planning phase"], ans: 1,
+    exp: "The V-Model maps each development phase to a corresponding testing phase on the right arm of the V." },
+  { q: "Which model delivers working software in increments, starting with core functionality?",
+    opts: ["Waterfall", "V-Model", "Iterative", "Prototyping"], ans: 2,
+    exp: "The Iterative model builds the system incrementally, starting with core features and adding more in each iteration." },
+  { q: "What is the main purpose of a prototype in the Prototyping model?",
+    opts: ["Final delivery", "Risk analysis", "Clarifying requirements", "Team training"], ans: 2,
+    exp: "Prototypes are built to clarify unclear requirements and get user feedback before the full system is developed." },
+  { q: "Which SDLC model is most flexible when requirements change frequently?",
+    opts: ["Waterfall", "V-Model", "Agile", "Spiral"], ans: 2,
+    exp: "Agile is designed to accommodate changing requirements through iterative sprints and continuous feedback." },
+  { q: "The Waterfall model is LEAST suitable when:",
+    opts: ["Requirements are well-defined", "Project is short", "Requirements change often", "Team is small"], ans: 2,
+    exp: "Waterfall's rigidity makes it poor for projects with frequently changing requirements." },
+  { q: "Which document is a key output of the Requirements Analysis phase?",
+    opts: ["Source Code", "SRS (Software Requirements Specification)", "Test Report", "Deployment Guide"], ans: 1,
+    exp: "The SRS (Software Requirements Specification) documents all functional and non-functional requirements gathered during analysis." },
+  { q: "Which model specifically emphasizes 'responding to change over following a plan'?",
+    opts: ["Waterfall", "V-Model", "Spiral", "Agile"], ans: 3,
+    exp: "This is directly from the Agile Manifesto, which values responding to change over following a fixed plan." },
+];
+
+let current = 0, score = 0, answered = false;
+
+function renderQuestion() {
+  const q = questions[current];
+  const pct = (current / questions.length) * 100;
+  document.getElementById('quiz-progress').style.width = pct + '%';
+  document.getElementById('quiz-area').innerHTML = `
+    <div class="quiz-card">
+      <div style="color:var(--muted);font-size:.82rem;margin-bottom:10px">Question ${current + 1} of ${questions.length}</div>
+      <div class="question-text">${q.q}</div>
+      <div class="options">
+        ${q.opts.map((o, i) => `<button class="option-btn" onclick="selectAnswer(${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}
+      </div>
+      <div class="explanation" id="explanation"></div>
+      <div class="quiz-nav">
+        <div style="color:var(--muted);font-size:.85rem">Score: <strong>${score}</strong></div>
+        <button class="btn btn-primary" id="next-btn" onclick="nextQuestion()" style="display:none">
+          ${current < questions.length - 1 ? 'Next →' : 'See Results'}
+        </button>
+      </div>
+    </div>`;
+  answered = false;
+}
+
+function selectAnswer(i) {
+  if (answered) return;
+  answered = true;
+  const q = questions[current];
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach((b, idx) => {
+    if (idx === q.ans) b.classList.add('correct');
+    else if (idx === i) b.classList.add('wrong');
+    b.style.pointerEvents = 'none';
+  });
+  if (i === q.ans) score++;
+  const exp = document.getElementById('explanation');
+  exp.textContent = (i === q.ans ? '✅ Correct! ' : '❌ Incorrect. ') + q.exp;
+  exp.className = 'explanation show ' + (i === q.ans ? 'correct-exp' : 'wrong-exp');
+  document.getElementById('next-btn').style.display = 'inline-block';
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= questions.length) { showResults(); return; }
+  renderQuestion();
+}
+
+function showResults() {
+  document.getElementById('quiz-progress').style.width = '100%';
+  const pct = Math.round((score / questions.length) * 100);
+  const msg = pct >= 80 ? '🏆 Excellent!' : pct >= 60 ? '👍 Good job!' : '📚 Keep studying!';
+  document.getElementById('quiz-area').innerHTML = `
+    <div class="quiz-card score-card">
+      <div style="font-size:2.5rem">${msg}</div>
+      <div class="score-num">${score} / ${questions.length}</div>
+      <div class="score-sub">${pct}% correct</div>
+      <button class="btn btn-primary" onclick="resetQuiz()">Retake Quiz</button>
+    </div>`;
+}
+
+function resetQuiz() {
+  current = 0; score = 0;
+  renderQuestion();
+}
+
+renderQuestion();
+</script>
+</body>
+</html>
